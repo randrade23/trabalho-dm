@@ -1,15 +1,20 @@
 ---
-title: "Trabalho DM"
+title: "Estudo dos crimes cometidos em Houston, Texas e previsão das forças de segurança necessárias"
 author: "Rui Andrade, Iúri Pena, André Diegues"
-date: "21 de Dezembro de 2016"
+date: "31 de Dezembro de 2016"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
+source("import.R")
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Apresentação do Dataset
+
+Recebemos, numa spreadsheet Excel, uma lista de observações de crimes em Houston, Texas, entre 1915 e 2014. O dataset contém, para cada observação, a data e hora de ocorrência do crime, o tipo de crime, a região onde o crime ocorreu (police beat), o local (restaurante, biblioteca, ...), os números de porta na rua onde o crime ocorreu, o nome da rua, o tipo de rua e sufixo (norte, sul, este, oeste, utilizado quando as ruas são muito grandes) e o número de vezes que a ocorrência se deu.
+
+## Tratamento de dados
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
