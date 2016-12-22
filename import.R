@@ -31,4 +31,7 @@ dates <- crimes$Date
 parsedDates <- data.frame(Date = dates, Day=day(dates), 
                          Month=month(dates, label=TRUE), 
                          Year=year(dates), WeekDay=wday(dates, label=TRUE))
-crimes <- merge(crimes, parsedDates, by='Date')
+crimes <- data.frame(crimes, parsedDates)
+crimes["Date.1"] <- NULL
+
+colnames(crimes)[10] <- "NrOffen"
