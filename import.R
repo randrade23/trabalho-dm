@@ -21,7 +21,7 @@ get_period <- function(x) {
 }
 
 # Load the dataset
-crimes <- read.xls("crime.xls", header=TRUE, na.strings=c("UNK", "-"))
+crimes <- read.xls("crime.xls", header=TRUE, na.strings=c("", "UNK", "-"))
 
 # Create Period column
 crimes <- mutate(crimes, Period = get_period(Hour))
