@@ -14,22 +14,42 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Recebemos, numa spreadsheet Excel, uma lista de observações de crimes em Houston, Texas, entre 1915 e 2014. O dataset contém, para cada observação, a data e hora de ocorrência do crime, o tipo de crime, a região onde o crime ocorreu (police beat), o local (restaurante, biblioteca, ...), os números de porta na rua onde o crime ocorreu, o nome da rua, o tipo de rua e sufixo (norte, sul, este, oeste, utilizado quando as ruas são muito grandes) e o número de vezes que a ocorrência se deu.
 
-## Tratamento de dados
+## Importação e pré-processamento dos dados
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+No que concerne ao tratamento de dados, a abordagem do nosso grupo foi bastante simples. Começámos por importar o dataset com a função _read.xls_ do package _gdata_, indicando a existência de headers e quais as strings que representam dados desconhecidos:
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r import, eval=FALSE}
+crimes <- read.xls("crime.xls", header=TRUE, na.strings=c("", "UNK", "-"))
 ```
 
-## Including Plots
+Em seguida, eliminámos todas as observações anteriores a 01/01/2015, uma vez que a vasta maioria dos dados se centra em observações posteriores a essa data e as anteriores são demasiado antigas para utilizar de forma fiável na análise exploratória de dados e construção de modelos de previsão.
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r dates, eval=FALSE}
+crimes <- crimes[ymd(crimes$Date) >= ymd("2015-01-01"),]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Uma vez eliminadas estas entradas, procedemos ao tratamento dos dados que vão interessar para poder obter informações sobre o tema em questão. Conforme descrito no enunciado, cada dia pode ser dividido em três períodos: manhã (08:00 até 12:00), tarde (12:00 até 19:00) e noite (todas as horas restantes), pelo que inicialmente criámos uma coluna para reflectir isso mesmo. Isto viria a ser importante para a construção de gráficos que nos permitissem perceber, por exemplo, qual a altura do dia em que mais crimes acontecem. Foi, também, por este motivo que dividimos as datas de cada ocorrência em dia, mês, ano e dia de semana.
+
+```{r period, eval=FALSE}
+crimes <- mutate(crimes, Period = get_period(Hour))
+
+dates <- crimes$Date
+parsedDates <- data.frame(Date = dates, Day=day(dates), 
+                         Month=month(dates, label=TRUE), 
+                         Year=year(dates), WeekDay=wday(dates, label=TRUE))
+crimes <- data.frame(crimes, parsedDates)
+crimes["Date.1"] <- NULL # esta linha remove a segunda coluna com a data
+```
+
+Para finalizar o tratamento de dados, e porque uma das colunas automaticamente criadas pelo _read.xls_ continha um nome que não era amigável para o tratamento em código, renomeamos a coluna relativa ao número de ocorrências de uma determinada observação.
+
+```{r rename, eval=FALSE}
+colnames(crimes)[10] <- "NrOffen"
+```
+
+## Análise exploratória dos dados
+
+## Construção de um modelo de previsão
+
+A construção de um modelo de previsão consiste, em termos gerais, em criar algum sistema que permita prever observações futuras, perceber de que forma é que as características de uma observação podem influenciar o desfecho de algo ou se existe alguma correlação no que foi observado. Considera-se, portanto, que existe alguma função que, dados os descritores de uma observação (os valores de algumas colunas), permite prever ou tirar alguma conclusão no que concerne ao peso desses descritores na existência dessa observação (variável-alvo).
+
