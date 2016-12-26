@@ -41,10 +41,12 @@ crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL # esta linha remove a segunda coluna com a data
 ```
 
-Para finalizar o tratamento de dados, e porque uma das colunas automaticamente criadas pelo _read.xls_ continha um nome que não era amigável para o tratamento em código, renomeamos a coluna relativa ao número de ocorrências de uma determinada observação.
+Para finalizar o tratamento de dados, e porque algumas das colunas automaticamente criadas pelo _read.xls_ continham nomes não eram amigáveis para o tratamento em código, procedemos a renomeações.
 
 ```{r rename, eval=FALSE}
 colnames(crimes)[10] <- "NrOffen"
+colnames(crimes)[3] <- "OffenType"
+colnames(crimes)[8] <- "StrType"
 ```
 
 ## Análise exploratória dos dados

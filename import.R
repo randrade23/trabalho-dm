@@ -37,4 +37,7 @@ parsedDates <- data.frame(Date = dates, Day=day(dates),
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL
 
+# Rename columns to friendlier names
 colnames(crimes)[10] <- "NrOffen"
+colnames(crimes)[3] <- "OffenType"
+colnames(crimes)[8] <- "StrType"
