@@ -59,9 +59,3 @@ ggplot(premise, aes(x=Premise,y=TotalOffenses)) + geom_histogram(binwidth=3,stat
 #crimetype per top10 premise
 crimepremise <- filter(crimes, Premise %in% premise$Premise) %>% group_by(Premise,OffenType) %>% summarise(TotalOffenses = sum(NrOffen))
 ggplot(crimepremise, aes(x=OffenType,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ Premise) + ggtitle("Offenses type by premise")
-
-#dayWeek with more/less crimes 
-temp <- summarise(crimesweek, AllOffenses = sum(TotalOffenses)) 
-maxCrimesDay <- filter(temp, AllOffenses == max(AllOffenses))
-minCrimesDay <- filter(temp, AllOffenses == min(AllOffenses))
-ggplot(bind_rows(maxCrimesDay, minCrimesDay),aes(x=WeekDay, y=AllOffenses))+ geom_histogram(binwidth=3,stat="identity") + ggtitle("Day of the week with maximum and minimum crime occurrences")
