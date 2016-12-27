@@ -26,7 +26,7 @@ for (off in unique(aux$OffenType)) {
   # Number of occurences per weekday for the current offense
   tmpdf <- filter(aux, OffenType==off)
   for (wd in unique(aux$WeekDay)) { # If any weekday is missing (no occurrences) add entry with 0
-    if (!(wd %in% aux(tmpdf$WeekDay))) {
+    if (!(wd %in% unique(tmpdf$WeekDay))) {
       tmpdf[nrow(tmpdf)+1,] <- c(off, wd, 0)
     }
   }
@@ -37,8 +37,8 @@ for (off in unique(aux$OffenType)) {
   i <- i + 1
 }
 typesday <- data.frame(typesday)
-colnames(typesday) <- c("OffenseType",unique(aux$WeekDay))
-ggparcoord(typesday,columns=2:8,groupColumn=1)
+colnames(typesday) <- c("OffenseType","Sun","Mon","Tues","Wed","Thurs","Fri","Sat")
+ggparcoord(typesday,columns=2:8,groupColumn=1, scale = "globalminmax", title = "OffenseType by Day of Week")
 
 #TOP 10 beats
 beats <- select(crimes, Beat, NrOffen) %>% group_by(Beat) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
