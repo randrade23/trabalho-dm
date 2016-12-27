@@ -40,6 +40,12 @@ parsedDates <- data.frame(Date = dates, Day=day(dates),
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL # esta linha remove a segunda coluna com a data
 ```
+Notamos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optamos por eliminar essas linhas, bem como as que poderiam ter valores inválidos.
+
+```{r remove, eval=FALSE}
+crimes <- crimes[complete.cases(crimes[,1:7]),]
+crimes <- crimes[!grepl("[0-9]+", crimes$OffenType),]
+```
 
 Para finalizar o tratamento de dados, e porque algumas das colunas automaticamente criadas pelo _read.xls_ continham nomes não eram amigáveis para o tratamento em código, procedemos a renomeações.
 

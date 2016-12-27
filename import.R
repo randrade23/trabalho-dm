@@ -37,6 +37,10 @@ parsedDates <- data.frame(Date = dates, Day=day(dates),
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL
 
+# Remove rows with values in invalid format
+crimes <- crimes[complete.cases(crimes[,1:7]),] # Lines with NA fields (excluding NAs in Type and Suffix)
+crimes <- crimes[!grepl("[0-9]+", crimes$OffenType),] # Remove OffenType numbers
+
 # Rename columns to friendlier names
 colnames(crimes)[10] <- "NrOffen"
 colnames(crimes)[3] <- "OffenType"
