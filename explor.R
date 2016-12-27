@@ -23,28 +23,9 @@ ggplot(avgCrimesperDayWeek, aes(x = WeekDay, y=avgCrimes)) +geom_histogram(binwi
 crimetype <- select(crimes, OffenType, NrOffen) %>% group_by(OffenType) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses))
 ggplot(crimetype, aes(x=OffenType,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + ggtitle("Offenses by type")
 
-# crime type frequency per hour per day of week
-aux <- select(crimes, OffenType, WeekDay, NrOffen) %>% group_by(OffenType,WeekDay) %>% summarise(TO = sum(NrOffen))
-typesday <- matrix(nrow=length(unique(aux$OffenType)), ncol=length(unique(aux$WeekDay))+1)
-i <- 1
-for (off in unique(aux$OffenType)) {
-  # Number of occurences per weekday for the current offense
-  tmpdf <- filter(aux, OffenType==off)
-  for (wd in unique(aux$WeekDay)) { # If any weekday is missing (no occurrences) add entry with 0
-    if (!(wd %in% unique(tmpdf$WeekDay))) {
-      tmpdf[nrow(tmpdf)+1,] <- c(off, wd, 0)
-    }
-  }
-  tmpdf <- arrange(tmpdf, WeekDay) # Sort by weekday
-  print(tmpdf)
-  vec <- c(off, tmpdf$TO) # Name of offense and occurences, ordered by weekday
-  typesday[i,] <- vec # Add to dataframe
-  i <- i + 1
-}
-typesday <- data.frame(typesday)
-colnames(typesday) <- c("OffenseType","Sun","Mon","Tues","Wed","Thurs","Fri","Sat")
-typesday$OffenseType <- factor(typesday$OffenseType)
-ggparcoord(typesday,columns=2:8,groupColumn=1, scale = "uniminmax", title = "OffenseType by Day of Week")
+# crime type frequency per day of week
+typesday <- select(crimes, OffenType, WeekDay, NrOffen) %>% group_by(OffenType,WeekDay) %>% summarise(TotalOffenses = sum(NrOffen))
+ggplot(typesday, aes(x=WeekDay, y=TotalOffenses, colour=OffenType)) + geom_point()
 
 #TOP 10 beats
 beats <- select(crimes, Beat, NrOffen) %>% group_by(Beat) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
