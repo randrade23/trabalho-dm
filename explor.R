@@ -12,7 +12,7 @@ ggplot(crimesmonth, aes(x=Day,y=TotalOffenses)) + geom_histogram(binwidth=3,stat
 # crime frequency per day of week (and hour)
 crimesweek <- select(crimes, Hour, WeekDay, NrOffen) %>% group_by(WeekDay, Hour) %>% summarise(TotalOffenses = sum(NrOffen))
 crimesweek$WeekDay <- factor(crimesweek$WeekDay, levels=c("Sun","Mon","Tues","Wed","Thurs","Fri","Sat"))
-ggplot(crimesweek, aes(x=WeekDay,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + ggtitle("Offenses by day of week and hour")
+ggplot(crimesweek, aes(x=WeekDay,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + ggtitle("Offenses by day of week")
 ggplot(crimesweek, aes(x=Hour,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ WeekDay) + ggtitle("Offenses by day of week and hour")
 
 # mean crimes per day
