@@ -23,16 +23,17 @@ aux <- select(crimes, OffenType, WeekDay, NrOffen) %>% group_by(OffenType,WeekDa
 typesday <- matrix(nrow=length(unique(aux$OffenType)), ncol=length(unique(aux$WeekDay))+1)
 i <- 1
 for (off in unique(aux$OffenType)) {
+  # Number of occurences per weekday for the current offense
   tmpdf <- filter(aux, OffenType==off)
-  for (wd in unique(aux$WeekDay)) {
+  for (wd in unique(aux$WeekDay)) { # If any weekday is missing (no occurrences) add entry with 0
     if (!(wd %in% aux(tmpdf$WeekDay))) {
       tmpdf[nrow(tmpdf)+1,] <- c(off, wd, 0)
     }
   }
-  tmpdf <- arrange(tmpdf, WeekDay)
+  tmpdf <- arrange(tmpdf, WeekDay) # Sort by weekday
   print(tmpdf)
-  vec <- c(off, tmpdf$TO)
-  typesday[i,] <- vec
+  vec <- c(off, tmpdf$TO) # Name of offense and occurences, ordered by weekday
+  typesday[i,] <- vec # Add to dataframe
   i <- i + 1
 }
 typesday <- data.frame(typesday)
