@@ -3,6 +3,7 @@
 library(gdata)
 library(dplyr)
 library(lubridate)
+library(DMwR)
 
 get_period <- function(x) {
   sapply(x, function(x) {
@@ -37,8 +38,11 @@ parsedDates <- data.frame(Date = dates, Day=day(dates),
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL
 
-# Remove rows with values in invalid format
-crimes <- crimes[complete.cases(crimes[,1:7]),] # Lines with NA fields (excluding NAs in Type and Suffix)
+# Try to complete lines with NA in important columns
+crimesA <- crimes[,1:7]
+crimesB <- crimes[,8:ncol(crimes)]
+crimesA <- knnImputation(crimesA, k=10)
+crimes <- cbind(crimesA, crimesB)
 
 # Rename columns to friendlier names
 colnames(crimes)[10] <- "NrOffen"
