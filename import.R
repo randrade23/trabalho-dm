@@ -38,11 +38,12 @@ parsedDates <- data.frame(Date = dates, Day=day(dates),
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL
 
-# Try to complete lines with NA in important columns
+# Try to complete lines with NA in important columns, delete invalid lines
 crimesA <- crimes[,1:7]
 crimesB <- crimes[,8:ncol(crimes)]
 crimesA <- knnImputation(crimesA, k=10)
 crimes <- cbind(crimesA, crimesB)
+crimes <- crimes[!(grepl("^[0-9 ]*$", crimes$Offense.Type)),]
 
 # Rename columns to friendlier names
 colnames(crimes)[10] <- "NrOffen"

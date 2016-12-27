@@ -41,13 +41,14 @@ crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL # esta linha remove a segunda coluna com a data
 ```
 
-Notamos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optamos por tentar completar essas linhas com _knnImputation_.
+Notamos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optamos por tentar completar essas linhas com _knnImputation_. Procedemos, também, à remoção de linhas com campos inválidos.
 
 ```{r remove, eval=FALSE}
 crimesA <- crimes[,1:7]
 crimesB <- crimes[,8:ncol(crimes)]
 crimesA <- knnImputation(crimesA, k=10)
 crimes <- cbind(crimesA, crimesB)
+crimes <- crimes[!(grepl("^[0-9 ]*$", crimes$Offense.Type)),]
 ```
 
 Para finalizar o tratamento de dados, e porque algumas das colunas automaticamente criadas pelo _read.xls_ continham nomes não eram amigáveis para o tratamento em código, procedemos a renomeações.
