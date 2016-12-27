@@ -38,7 +38,8 @@ for (off in unique(aux$OffenType)) {
 }
 typesday <- data.frame(typesday)
 colnames(typesday) <- c("OffenseType","Sun","Mon","Tues","Wed","Thurs","Fri","Sat")
-ggparcoord(typesday,columns=2:8,groupColumn=1, scale = "globalminmax", title = "OffenseType by Day of Week")
+typesday$OffenseType <- factor(typesday$OffenseType)
+ggparcoord(typesday,columns=2:8,groupColumn=1, scale = "uniminmax", title = "OffenseType by Day of Week")
 
 #TOP 10 beats
 beats <- select(crimes, Beat, NrOffen) %>% group_by(Beat) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
