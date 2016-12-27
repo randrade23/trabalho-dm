@@ -42,7 +42,7 @@ crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL # esta linha remove a segunda coluna com a data
 ```
 
-Notamos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optamos por tentar completar essas linhas com _knnImputation_. Procedemos, também, à remoção de linhas com campos inválidos.
+Notámos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optámos por tentar completar essas linhas com _knnImputation_. Procedemos, também, à remoção de linhas com campos inválidos.
 
 ```{r remove, eval=FALSE}
 crimesA <- crimes[,1:7]
