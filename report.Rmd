@@ -6,6 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+library(ggplot2)
 source("import.R")
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -60,6 +61,65 @@ colnames(crimes)[8] <- "StrType"
 ```
 
 ## Análise exploratória dos dados
+
+Nesta secção do relatório, o objectivo é perceber de que forma podem os dados ser úteis para a polícia, e, consequentemente, como é que os podemos mostrar, seja em forma textual ou gráfica, de maneira a poder tirar conclusões.
+
+```{r crimes_per_month, echo=FALSE, message=FALSE, warning=FALSE}
+crimesmonth <- select(crimes,  Month, Day, NrOffen) %>% group_by(Month, Day) %>% summarise(TotalOffenses = sum(NrOffen))
+crimesmonth$Month <- factor(crimesmonth$Month, levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+ggplot(crimesmonth, aes(x=Day,y=TotalOffenses)) + geom_histogram(stat="identity") + facet_wrap(~ Month) + ggtitle("Ocorrências por dia de cada mês")
+```
+
+Neste gráfico, é possível perceber em que alturas de cada mês é que ocorrem mais crimes, bem como comparar as diferentes alturas de cada mês entre si. Dada a natureza dos dados disponibilizados, quase todas as ocorrências estão registadas em Janeiro, pelo que se torna difícil tirar conclusões sobre a distribuição de crimes num ano inteiro.
+
+```{r crimes_per_weekday_and_hour, echo=FALSE, message=FALSE, warning=FALSE}
+crimesweek <- select(crimes, Hour, WeekDay, NrOffen) %>% group_by(WeekDay, Hour) %>% summarise(TotalOffenses = sum(NrOffen))
+crimesweek$WeekDay <- factor(crimesweek$WeekDay, levels=c("Sun","Mon","Tues","Wed","Thurs","Fri","Sat"))
+ggplot(crimesweek, aes(x=WeekDay,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + ggtitle("Distribuição da frequência de crimes por dia de semana")
+ggplot(crimesweek, aes(x=Hour,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ WeekDay) + ggtitle("Crimes por hora por cada dia de semana")
+```
+
+Com a ajuda destes dois gráficos, é possível fazer uma interpretação muito mais detalhada de quando ocorrem mais crimes, já que podemos comparar a quantidade de ocorrências em cada dia de semana e também perceber em que horas de cada dia de semana é que sucedem delitos.
+
+```{r avg_crimes_weekday, echo=FALSE, message=FALSE, warning=FALSE}
+avgCrimesperDayWeek <- summarise(crimesweek, avgCrimes=mean(TotalOffenses))
+ggplot(avgCrimesperDayWeek, aes(x = WeekDay, y=avgCrimes)) +geom_histogram(binwidth = 3,stat = "identity") + ggtitle("Média de crimes por dia de semana")
+```
+
+Ao comparar o número médio de crimes por cada dia de semana, e considerando o quão semelhantes os valores são, podemos concluir que as diferenças nas alturas em que os crimes ocorrem acabam por se dissipar a longo prazo.
+
+```{r freq_crimetype, echo=FALSE, message=FALSE, warning=FALSE}
+crimetype <- select(crimes, OffenType, NrOffen) %>% group_by(OffenType) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses))
+ggplot(crimetype, aes(x=OffenType,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + ggtitle("Frequência dos tipos de crime")
+```
+
+Um gráfico de barras que considera as frequências dos tipos de crime é útil para perceber que tipos de crime ocorrem mais regularmente, o que poderá eventualmente ajudar a decidir quais os procedimentos a tomar na maioria dos casos ou a necessidade de dispôr equipas especiais para certos crimes, por exemplo.
+
+```{r freq_crimetype_per_weekday, echo=FALSE, message=FALSE, warning=FALSE}
+typesday <- select(crimes, OffenType, WeekDay, NrOffen) %>% group_by(OffenType,WeekDay) %>% summarise(TotalOffenses = sum(NrOffen))
+ggplot(typesday, aes(x=WeekDay, y=TotalOffenses, colour=OffenType)) + geom_point() + ggtitle("Frequência dos tipos de crime por dia de semana")
+```
+
+Com a ajuda de um scatterplot, agrupando pelo tipo de crime e distribuindo a frequência de cada tipo de crime por dia de semana, podemos visualizar quais são os crimes mais frequentes em cada momento da semana.
+
+```{r top10_beats_premises, echo=FALSE, message=FALSE, warning=FALSE}
+beats <- select(crimes, Beat, NrOffen) %>% group_by(Beat) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
+beats$Beat <- factor(beats$Beat, levels=arrange(beats, desc(TotalOffenses))$Beat)
+ggplot(beats, aes(x=Beat,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + coord_flip() + ggtitle("Top 10 de Beats com mais crimes")
+
+premise <- select(crimes, Premise, NrOffen) %>% group_by(Premise) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
+premise$Premise <- factor(premise$Premise, levels=arrange(premise, desc(TotalOffenses))$Premise)
+ggplot(premise, aes(x=Premise,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + coord_flip() + ggtitle("Top 10 locais com mais crimes")
+```
+
+A partir dos dados fornecidos, podemos facilmente perceber quais as regiões (beats) com mais crimes historicamente, bem como os tipos de local mais afectados.
+
+```{r crimes_per_top10_premise, echo=FALSE, message=FALSE, warning=FALSE}
+crimepremise <- filter(crimes, Premise %in% premise$Premise) %>% group_by(Premise,OffenType) %>% summarise(TotalOffenses = sum(NrOffen))
+ggplot(crimepremise, aes(x=OffenType,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ Premise) + ggtitle("Frequência dos tipos de crime por cada local do top 10 com mais crimes")
+```
+
+Ao combinar a frequência dos tipos de crime com o top 10 de locais com mais crimes, podemos visualizar quais os crimes mais comuns em cada um dos tipos de local aparentemente mais apetecíveis para os criminosos.
 
 ## Construção de um modelo de previsão
 
