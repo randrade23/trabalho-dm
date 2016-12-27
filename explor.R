@@ -43,10 +43,19 @@ ggparcoord(typesday,columns=2:8,groupColumn=1, scale = "uniminmax", title = "Off
 
 #TOP 10 beats
 beats <- select(crimes, Beat, NrOffen) %>% group_by(Beat) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
-beats$Beat <- factor(beats$Beat, levels=c("12D10","6B60","1A20","17E10","19G10","18F20","13D20","2A50","3B10","1A50"))
+beats$Beat <- factor(beats$Beat, levels=arrange(beats, desc(TotalOffenses))$Beat)
 ggplot(beats, aes(x=Beat,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + coord_flip() + ggtitle("TOP10 Beats")
 
 #TOP 10 premises
 premise <- select(crimes, Premise, NrOffen) %>% group_by(Premise) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses)) %>% head(10)
-premise$Premise <- factor(premise$Premise, levels=c("Residence or House","Apartment Parking Lot","Apartment","Road, Street, or Sidewalk","Restaurant or Cafeteria Parking Lot","Driveway","Department or Discount Store","Other Parking Lot","Miscellaneous Business (Non-Specific)","Grocery Store or Supermarket"))
+premise$Premise <- factor(premise$Premise, levels=arrange(premise, desc(TotalOffenses))$Premise)
 ggplot(premise, aes(x=Premise,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + coord_flip() + ggtitle("TOP10 Premises")
+
+#crimetype per top10 premise
+crimepremise <- filter(crimes, Premise %in% premise$Premise) %>% group_by(Premise,OffenType) %>% summarise(TotalOffenses = sum(NrOffen))
+ggplot(crimepremise, aes(x=OffenType,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ Premise) + ggtitle("Offenses type by premise")
+
+
+crimesweek <- select(crimes, Hour, WeekDay, NrOffen) %>% group_by(WeekDay, Hour) %>% summarise(TotalOffenses = sum(NrOffen))
+crimesweek$WeekDay <- factor(crimesweek$WeekDay, levels=c("Sun","Mon","Tues","Wed","Thurs","Fri","Sat"))
+ggplot(crimesweek, aes(x=Hour,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ WeekDay) + ggtitle("Offenses by day of week and hour")
