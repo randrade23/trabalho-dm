@@ -22,10 +22,10 @@ No que concerne ao tratamento de dados, a abordagem do nosso grupo foi bastante 
 crimes <- read.xls("crime.xls", header=TRUE, na.strings=c("", "UNK", "-"))
 ```
 
-Em seguida, eliminámos todas as observações anteriores a 01/01/2015, uma vez que a vasta maioria dos dados se centra em observações posteriores a essa data e as anteriores são demasiado antigas para utilizar de forma fiável na análise exploratória de dados e construção de modelos de previsão.
+Em seguida, eliminámos todas as observações anteriores a 01/01/2014, uma vez que a vasta maioria dos dados se centra em observações posteriores a essa data e as anteriores são demasiado antigas para utilizar de forma fiável na análise exploratória de dados e construção de modelos de previsão.
 
 ```{r dates, eval=FALSE}
-crimes <- crimes[ymd(crimes$Date) >= ymd("2015-01-01"),]
+crimes <- crimes[ymd(crimes$Date) >= ymd("2014-01-01"),]
 ```
 
 Uma vez eliminadas estas entradas, procedemos ao tratamento dos dados que vão interessar para poder obter informações sobre o tema em questão. Conforme descrito no enunciado, cada dia pode ser dividido em três períodos: manhã (08:00 até 12:00), tarde (12:00 até 19:00) e noite (todas as horas restantes), pelo que inicialmente criámos uma coluna para reflectir isso mesmo. Isto viria a ser importante para a construção de gráficos que nos permitissem perceber, por exemplo, qual a altura do dia em que mais crimes acontecem. Foi, também, por este motivo que dividimos as datas de cada ocorrência em dia, mês, ano e dia de semana.
@@ -40,11 +40,10 @@ parsedDates <- data.frame(Date = dates, Day=day(dates),
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL # esta linha remove a segunda coluna com a data
 ```
-Notamos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optamos por eliminar essas linhas, bem como as que poderiam ter valores inválidos.
+Notamos, também, várias linhas com NAs em campos importantes, como o número de porta ou o tipo de local, pelo que optamos por eliminar essas linhas.
 
 ```{r remove, eval=FALSE}
 crimes <- crimes[complete.cases(crimes[,1:7]),]
-crimes <- crimes[!grepl("[0-9]+", crimes$OffenType),]
 ```
 
 Para finalizar o tratamento de dados, e porque algumas das colunas automaticamente criadas pelo _read.xls_ continham nomes não eram amigáveis para o tratamento em código, procedemos a renomeações.
