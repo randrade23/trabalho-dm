@@ -9,10 +9,15 @@ crimesmonth <- select(crimes,  Month, Day, NrOffen) %>% group_by(Month, Day) %>%
 crimesmonth$Month <- factor(crimesmonth$Month, levels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
 ggplot(crimesmonth, aes(x=Day,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ Month) + ggtitle("Offenses by month and day")
 
-# crime freuqency per hour per day of week
+# crime frequency per day of week (and hour)
 crimesweek <- select(crimes, Hour, WeekDay, NrOffen) %>% group_by(WeekDay, Hour) %>% summarise(TotalOffenses = sum(NrOffen))
 crimesweek$WeekDay <- factor(crimesweek$WeekDay, levels=c("Sun","Mon","Tues","Wed","Thurs","Fri","Sat"))
+ggplot(crimesweek, aes(x=WeekDay,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + ggtitle("Offenses by day of week and hour")
 ggplot(crimesweek, aes(x=Hour,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ WeekDay) + ggtitle("Offenses by day of week and hour")
+
+# mean crimes per day
+avgCrimesperDayWeek <- summarise(crimesweek, avgCrimes=mean(TotalOffenses))
+ggplot(avgCrimesperDayWeek, aes(x = WeekDay, y=avgCrimes)) +geom_histogram(binwidth = 3,stat = "identity") + ggtitle("Average Crimes per Day of the week")
 
 # crime type frequency
 crimetype <- select(crimes, OffenType, NrOffen) %>% group_by(OffenType) %>% summarise(TotalOffenses = sum(NrOffen)) %>% arrange(desc(TotalOffenses))
@@ -56,13 +61,7 @@ crimepremise <- filter(crimes, Premise %in% premise$Premise) %>% group_by(Premis
 ggplot(crimepremise, aes(x=OffenType,y=TotalOffenses)) + geom_histogram(binwidth=3,stat="identity") + facet_wrap(~ Premise) + ggtitle("Offenses type by premise")
 
 #dayWeek with more/less crimes 
-
 temp <- summarise(crimesweek, AllOffenses = sum(TotalOffenses)) 
 maxCrimesDay <- filter(temp, AllOffenses == max(AllOffenses))
 minCrimesDay <- filter(temp, AllOffenses == min(AllOffenses))
 ggplot(bind_rows(maxCrimesDay, minCrimesDay),aes(x=WeekDay, y=AllOffenses))+ geom_histogram(binwidth=3,stat="identity") + ggtitle("Day of the week with maximum and minimum crime occurrences")
-
-#mean crimes per day
-
-avgCrimesperDayWeek <- summarise(crimesweek, avgCrimes=mean(TotalOffenses))
-ggplot(avgCrimesperDayWeek, aes(x = WeekDay, y=avgCrimes)) +geom_histogram(binwidth = 3,stat = "identity") + ggtitle("Average Crimes per Day of the week")
