@@ -41,6 +41,9 @@ crimes["Date.1"] <- NULL
 # Try to complete lines with NA in important columns, delete invalid lines
 crimesA <- crimes[,1:7]
 crimesB <- crimes[,8:ncol(crimes)]
+crimesA$Premise <- as.character(crimesA$Premise)
+crimesA$Premise[is.na(crimesA$Premise)] <- "Other, Unknown or Not Listed"
+crimesA$Premise <- factor(crimesA$Premise)
 crimesA <- knnImputation(crimesA, k=10)
 crimes <- cbind(crimesA, crimesB)
 crimes <- crimes[!(grepl("^[0-9 ]*$", crimes$Offense.Type)),]
