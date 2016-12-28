@@ -6,6 +6,7 @@ source("import.R")
 
 set.seed(1)
 crimes_pred <- crimes %>% expandRows("NrOffen") %>% dplyr::select(Day, OffenType, Premise, StreetName, BlockRange, Period, Beat, WeekDay)
+crimes_pred$Period <- factor(crimes_pred$Period) # Due to NA coersion 
 sp <- sample(1:nrow(crimes_pred), as.integer(nrow(crimes_pred) * 0.7))
 tr <- crimes_pred[sp, ]
 ts <- crimes_pred[-sp, ]
