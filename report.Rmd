@@ -203,7 +203,7 @@ O frame _t_ passará a ter todas as combinações de tipos de crime, dias de sem
 
 ```{r pred_group_table, eval=TRUE, echo=TRUE}
 t <- mutate(t, Period = get_period(Hour))
-group_t <- summarise(group_by(t, Beat, Period), TotalOccurrences=sum(TO))
+group_t <- summarise(group_by(t, Beat, Period, WeekDay), TotalOccurrences=sum(TO))
 print(group_t, n=nrow(group_t))
 ```
 
