@@ -172,3 +172,37 @@ mae <- mean(abs(ps-ts$TO))
 ```
 
 Em média, o nosso modelo diverge cerca de 0.3 crimes em relação ao número real registado, o que, neste caso, pode significar que, nos casos em que são previstos 2 crimes (ao arredondar o valor do nó que prevê 1.5 crimes), deveria ser previsto apenas 1 crime (prevendo algum valor inferior a 1.5 crimes e superior a 1.2 crimes), ou que, nos casos em que são previstos 1.2 ou 1.3 crimes, deveriam ser previstos 2 crimes (prevendo algum valor entre 1.2 ou 1.3 crimes e 1.5 ou 1.6 crimes, respectivamente).
+
+Para utilizar o modelo numa situação real, podemos criar uma tabela com todas as possibilidades de tipos de crime, dias de semana, horas e beats, prevendo depois o número de ocorrências para cada possibilidade.
+
+```{r pred_allpos, echo=TRUE, eval=TRUE}
+library(utils)
+
+# Preparar a tabela com todas as combinacoes de tipo de crime, dia de semana, horas, beats
+
+t <- expand.grid(OffenType=unique(crimes$OffenType), WeekDay=unique(crimes$WeekDay), Hour=unique(crimes$Hour), Beat=unique(crimes$Beat))
+
+# Adicionar coluna para numero de ocorrencias
+
+t["TO"] <- NA
+
+# Efectuar previsao do numero de ocorrencias
+
+preds <- predict(tree, t)
+
+# Juntar a previsao a tabela gerada no inicio
+
+t["TO"] <- preds
+
+# Arredondar os valores para fazerem sentido
+
+t$TO <- round(t$TO)
+```
+
+O frame _t_ passará a ter todas as combinações de tipos de crime, dias de semana, horas, beats e número previsto de ocorrências. Para responder à questão do enunciado, onde se pede para prever o número de ocorrências num determinado beat para algum período de um dia, podemos agrupar os resultados obtidos e teremos a resposta.
+
+```{r pred_group_table, eval=TRUE, echo=TRUE}
+t <- mutate(t, Period = get_period(Hour))
+group_t <- summarise(group_by(t, Beat, Period), TotalOccurrences=sum(TO))
+print(group_t, n=nrow(group_t))
+```
