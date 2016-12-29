@@ -206,3 +206,5 @@ t <- mutate(t, Period = get_period(Hour))
 group_t <- summarise(group_by(t, Beat, Period), TotalOccurrences=sum(TO))
 print(group_t, n=nrow(group_t))
 ```
+
+Em todo o caso, o modelo proposto tem liberdade para fazer estas previsões só para um certo tipo de crimes, um certo período, um certo beat ou um certo dia de semana, ou algum tipo de combinação dessas características.
