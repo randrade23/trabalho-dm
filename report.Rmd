@@ -132,7 +132,7 @@ No nosso caso, após analisar os dados fornecidos, foi possível identificar cer
 * Tipo de crime (OffenType)
 * Dia de semana (WeekDay)
 * Hora (Hour)
-* Beat (Região)
+* Região (Beat)
 
 No que toca à programação do modelo, optámos por construir um modelo baseado em Decision Tree, uma vez que é um problema de regressão (queremos determinar quantos crimes vão acontecer) e os modelos em árvore podem ser facilmente visualizados para perceber o mecanismo de decisão.
 
