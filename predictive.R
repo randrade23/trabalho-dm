@@ -11,7 +11,7 @@ sp <- sample(1:nrow(crimes_pred), as.integer(nrow(crimes_pred) * 0.7))
 tr <- crimes_pred[sp, ]
 ts <- crimes_pred[-sp, ]
 
-# Tree Model
+# Tree Model 
 
 tree <- rpartXse(TO ~ ., tr)
 ps <- predict(tree,ts)
