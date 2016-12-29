@@ -145,7 +145,7 @@ crimes_pred <- summarise(group_by(crimes, OffenType, WeekDay, Hour, Beat), TO=su
 Para testar a nossa hipótese, dividimos os dados em 70% para um conjunto de dados para treino e 30% para um conjunto de dados para teste do modelo. Utilizamos uma seed antes de proceder à divisão para garantir que os valores e modelo referidos no relatório não divergem da nossa explicação.
 
 ```{r pred_split, eval=FALSE, message=FALSE, warning=FALSE}
-set.seed(1)
+set.seed(50)
 sp <- sample(1:nrow(crimes_pred), as.integer(nrow(crimes_pred) * 0.7))
 tr <- crimes_pred[sp, ]
 ts <- crimes_pred[-sp, ]
@@ -171,7 +171,7 @@ ps <- predict(tree,ts)
 mae <- mean(abs(ps-ts$TO))
 ```
 
-Em média, o nosso modelo diverge cerca de 0.3 crimes em relação ao número real registado, o que, neste caso, pode significar que, nos casos em que são previstos 2 crimes (ao arredondar o valor do nó que prevê 1.5 crimes), deveria ser previsto apenas 1 crime (prevendo algum valor inferior a 1.5 crimes e superior a 1.2 crimes), ou que, nos casos em que são previstos 1.2 ou 1.3 crimes, deveriam ser previstos 2 crimes (prevendo algum valor entre 1.2 ou 1.3 crimes e 1.5 ou 1.6 crimes, respectivamente).
+Em média, o nosso modelo diverge cerca de 0.3 crimes em relação ao número real registado, o que, neste caso, pode significar que, nos casos em que são previstos 2 crimes (ao arredondar o valor do nó que prevê 1.6 crimes), deveria ser previsto apenas 1 crime (prevendo algum valor inferior a 1.5 crimes e superior ou igual a 1.3 crimes), ou que, nos casos em que são previstos 1.2 crimes, deveriam ser previstos 2 crimes (prevendo 1.5 crimes).
 
 Para utilizar o modelo numa situação real, podemos criar uma tabela com todas as possibilidades de tipos de crime, dias de semana, horas e beats, prevendo depois o número de ocorrências para cada possibilidade.
 
