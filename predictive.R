@@ -5,7 +5,8 @@ library(splitstackshape)
 
 source("import.R")
 
-crimes_pred <- summarise(group_by(crimes, OffenType, Premise, WeekDay, Hour, Beat), TO=sum(NrOffen))
+set.seed(1)
+crimes_pred <- summarise(group_by(crimes, OffenType, WeekDay, Hour, Beat), TO=sum(NrOffen))
 sp <- sample(1:nrow(crimes_pred), as.integer(nrow(crimes_pred) * 0.7))
 tr <- crimes_pred[sp, ]
 ts <- crimes_pred[-sp, ]
