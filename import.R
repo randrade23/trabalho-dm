@@ -32,9 +32,9 @@ crimes <- mutate(crimes, Period = get_period(Hour))
 
 # Split dates into day, month, year, weekday (this takes a while to process)
 dates <- crimes$Date
-parsedDates <- data.frame(Date = dates, Day=day(dates), 
-                         Month=month(dates, label=TRUE), 
-                         Year=year(dates), WeekDay=wday(dates, label=TRUE))
+parsedDates <- data.frame(Date = dates, Day=lubridate::day(dates), 
+                         Month=lubridate::month(dates, label=TRUE), 
+                         Year=lubridate::year(dates), WeekDay=lubridate::wday(dates, label=TRUE))
 crimes <- data.frame(crimes, parsedDates)
 crimes["Date.1"] <- NULL
 
